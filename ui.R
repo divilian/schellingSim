@@ -29,9 +29,23 @@ shinyUI(fluidPage(
         ),
 
         mainPanel(
-            verticalLayout(
-                plotOutput("thePlot",width="600px",height="600px"),
-                uiOutput("plotSlider")
+            tabsetPanel(id="outputView",selected="Map",
+                tabPanel("Map",
+                    verticalLayout(
+                        plotOutput("map",width="600px",height="600px"),
+                        uiOutput("plotSlider")
+                    )
+                ),
+                tabPanel("Migration",
+                    verticalLayout(
+                        plotOutput("migrationPlot",width="600px",height="600px")
+                    )
+                )#,
+#                tabPanel("Diversity",
+#                    verticalLayout(
+#                        plotOutput("diversityPlot",width="600px",height="600px")
+#                    )
+#                )
             )
         )
     )

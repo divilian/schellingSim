@@ -108,11 +108,15 @@ run.sim <- function(probRed=.3,probBlue=.3,thresh=.6,width=50,height=50,
     config = matrix(ifelse(starter < probRed, RED, 
         ifelse(starter < probRed + probBlue, BLUE,
         EMPTY)),nrow=height)
+    num.reds <- length(which(config == RED))
+    num.blues <- length(which(config == RED))
+    num.total <- num.reds + num.blues
 
     city = array(dim=c(width,height,numGen))
     city[,,1] = config
 
     plots <- list()
+    num.swaps <- numeric(length=numGen)
     for (gen in 2:numGen) {
         setProgress(paste0("Simulating generation ", gen, "..."),val=gen)
         reds = pointsForGrid(city[,,gen-1],RED)
@@ -122,6 +126,9 @@ run.sim <- function(probRed=.3,probBlue=.3,thresh=.6,width=50,height=50,
                 data.frame(x=blues[[1]],y=blues[[2]],col="blue"))
         plots[[gen-1]] <- ggplot(the.data, aes(x=x,y=y,color=col,shape=col)) + 
             geom_point(show_guide=FALSE, size=4.0) +
+            ggtitle(paste("Generation",gen-1)) +
+            scale_color_manual(values=c("#FF0000","#0000FF")) +
+            scale_shape_manual(values=c(19,15)) +
             theme(axis.line=element_blank(),
                   axis.text.x=element_blank(),
                   axis.text.y=element_blank(),
@@ -133,10 +140,7 @@ run.sim <- function(probRed=.3,probBlue=.3,thresh=.6,width=50,height=50,
                   panel.border=element_blank(),
                   panel.grid.major=element_blank(),
                   panel.grid.minor=element_blank(),
-                  plot.background=element_blank()) + 
-                  ggtitle(paste("Generation",gen-1)) +
-                  scale_color_manual(values=c("#FF0000","#0000FF")) +
-scale_shape_manual(values=c(19,15))
+                  plot.background=element_blank())
         
         city[,,gen] = city[,,gen-1]
 
@@ -148,12 +152,11 @@ scale_shape_manual(values=c(19,15))
                     city[row,col,gen] = EMPTY
                     randEmpty = findRandomEmpty(city[,,gen])
                     city[randEmpty[1],randEmpty[2],gen] = curval
+                    num.swaps[[gen]] <- num.swaps[[gen]] + 1
                 }
             }
         }
     }
-    #cat("The average ratio is ", 
-    #    round(computeAvgRatio(city[,,numGen]),2),".\n",sep="")
-    list(plots=plots)
+    list(plots=plots, num.swaps=num.swaps, perc.swaps=num.swaps/num.total)
 }
 
