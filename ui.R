@@ -36,9 +36,9 @@ shinyUI(fluidPage(
                         uiOutput("plotSlider")
                     )
                 ),
-                tabPanel("Migration",
+                tabPanel("Movement",
                     verticalLayout(
-                        plotOutput("migrationPlot",width="600px",height="600px")
+                        plotOutput("movementPlot",width="600px",height="600px")
                     )
                 )#,
 #                tabPanel("Diversity",
